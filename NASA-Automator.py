@@ -5,6 +5,18 @@ inDir = 'Input Files'
 outDir = 'Output Files'
 varList = ['humidity', 'radiation', 'windspeed']
 
+coords = []
+names = []
+
+with open('locations_sub.csv', 'r', newline='') as locFile:
+    locReader = csv.reader(locFile)
+
+    for location in locReader:
+        coords.append('_'.join([location[0], location[1]])) # Lat_Lon
+        names.append(location[2])
+
+
+
 if not os.path.exists(outDir):
     # create output directory
     os.mkdir(outDir)
@@ -34,9 +46,16 @@ for var in varList:
 
 
             lat = inFileName.split('_')[2]
+            # Lat_Lon
             lon = inFileName.split('_')[4].split('.')[0] + '.' + inFileName.split('_')[4].split('.')[1]
             loc = '_'.join([lat, lon])
-            print(loc + ' csv input: [in progress]')
+
+            if loc in coords:
+                locName = names[coords.index(loc)] # Match lat_lon with location name
+            else:
+                locName = loc
+
+            print(locName + ' csv input: [in progress]')
 
             with open(inFilePath, 'r', newline='') as inFile:
                 inReader = csv.reader(inFile)
@@ -45,7 +64,6 @@ for var in varList:
                 for n in range(12):
                     next(inReader)
 
-                checkLoc = True
                 col = varList.index(var) + 3 # column where info is stored
                 doy = 1
                 outCol = 4 # column where data is to be outputted
@@ -66,9 +84,9 @@ for var in varList:
                         date = '-'.join([year, mo.rjust(2, '0'), dy.rjust(2, '0')])
 
                         # check if a new location column needs to be created
-                        if loc not in list[0]:
+                        if locName not in list[0]:
                             # add new column
-                            list[0].append(loc)
+                            list[0].append(locName)
                             list.append([])
 
                         # check if new year is started to reset DOY
@@ -82,14 +100,14 @@ for var in varList:
                             list[2].append(doy)
                             list[3].append(date)
 
-                        outCol = list[0].index(loc) + 1 # set column to output
+                        outCol = list[0].index(locName) + 1 # set column to output
 
                         # check if data has already been added
                         if not ((date in list[3]) and (len(list[outCol]) >= len(list[3]))):
                             list[outCol].append(str(data)) # extract data into list
 
                         doy += 1 # increment DOY
-            print(loc + ' csv input: [complete]')
+            print(locName + ' csv input: [complete]')
             print('')
         numOfColumns = len(list[0])
         numOfRows = len(list[1])
