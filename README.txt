@@ -17,9 +17,7 @@ will automatically create a new folder titled 'Output Files' to store the genera
 CSV files. If there is an existing folder titled 'Output Files', it will use that
 folder. If there are existing CSV files in the 'Output Files' folder titled exactly
 as the program generates, those files will be overwritten. Otherwise, new files
-will be created alongside existing files in the folder. There is a hidden .git
-folder in the project directory to privately back up the project online, it will
-have no effect on the program functionality.
+will be created alongside existing files in the folder.
 
 
 CONTACT
